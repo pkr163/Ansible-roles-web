@@ -1,0 +1,32 @@
+worker_processes  {{ nginx_worker_processes }};
+
+events {
+    worker_connections  {{ nginx_worker_connections }};
+}
+
+http {
+    server {
+        listen 80;
+        server_name {{ nginx_server_name }};
+
+        location / {
+            proxy_pass http://{{ app_server_ip }}:{{ app_server_port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+
+    server {
+        listen 443 ssl;
+        server_name {{ nginx_server_name }};
+
+        ssl_certificate {{ ssl_cert_file }};
+        ssl_certificate_key {{ ssl_key_file }};
+
+        location / {
+            proxy_pass http://{{ app_server_ip }}:{{ app_server_port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+}
