@@ -1,0 +1,30 @@
+---
+# tasks file for web role
+- name: Install Nginx web server
+  become: yes
+  apt:
+    name: nginx
+    state: present
+
+- name: Copy Nginx configuration template
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start Nginx service
+  become: yes
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Copy index.html
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
