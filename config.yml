@@ -1,0 +1,40 @@
+---
+- name: Configure Web Server
+  become: true
+  copy:
+    src: files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - restart nginx
+
+- name: Copy SSL Certificate
+  become: true
+  copy:
+    src: files/cert.pem
+    dest: /etc/nginx/cert.pem
+  notify:
+    - restart nginx
+
+- name: Copy SSL Key
+  become: true
+  copy:
+    src: files/key.pem
+    dest: /etc/nginx/key.pem
+  notify:
+    - restart nginx
+
+- name: Copy Website Content
+  become: true
+  copy:
+    src: files/index.html
+    dest: /usr/share/nginx/html/index.html
+  notify:
+    - restart nginx
+
+- name: Restart Nginx
+  become: true
+  service:
+    name: nginx
+    state: restarted
+  tags:
+    - restart nginx
